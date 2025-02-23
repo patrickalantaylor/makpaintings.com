@@ -1,0 +1,31 @@
+.DS_Store
+
+# Image files
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.tiff
+*.tif
+*.svg
+*.webp
+
+# Thumbnails
+**/thumbs/**
+**/thumbnails/**
+
+# Other media
+*.ico
+*.psd
+*.ai
+*.eps
+*.raw
+*.cr2
+*.nef
+*.orf
+*.sr2
+
+# Ignore generated image files
+*.cache
+*.tmp

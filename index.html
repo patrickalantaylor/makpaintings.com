@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Paintings by Michael Knutson</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+      background: #2e2e2e;
+      color: #fff;
+      padding-bottom: 60px; /* Space for fixed footer */
+      overflow-y: auto; /* Enable scrolling by default */
+    }
+    body.no-scroll {
+      overflow: hidden; /* Disable scrolling when overlay is shown */
+    }
+    header {
+      text-align: center;
+      padding: 20px;
+      background: #2e2e2e;
+      font-family: "Times New Roman", Times, serif;
+      font-weight: bold;
+      letter-spacing: 0.15em;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1001;
+      transition: opacity 0.3s ease-out;
+    }
+    footer {
+      text-align: center;
+      padding: 15px;
+      background: #2e2e2e;
+      color: #fff;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1001;
+    }
+    footer a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 15px;
+    }
+    footer a:hover {
+      text-decoration: underline;
+    }
+    .header-placeholder {
+      height: 140px;
+    }
+    .gallery {
+      column-count: 3;
+      column-gap: 0;
+      padding-top: 30px;
+    }
+    .image-container {
+      padding: 5px;
+      box-sizing: border-box;
+      display: inline-block;
+      width: 100%;
+    }
+    .image-container img {
+      width: 100%;
+      display: block;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    .image-container img:hover {
+      transform: scale(1.05);
+    }
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1002;
+      justify-content: center;
+      align-items: center;
+    }
+    .overlay-content {
+      position: relative;
+      text-align: center;
+    }
+    .overlay-content img {
+      max-width: 90%;
+      max-height: 80vh;
+    }
+    .overlay-content .description {
+      margin-top: 15px;
+      font-size: 18px;
+      color: #fff;
+    }
+    @media screen and (max-width: 600px) {
+      .gallery {
+        column-count: 2;
+      }
+      .header-placeholder {
+        height: 160px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header id="pageHeader">
+    <h1>Paintings by MICHAEL A KNUTSON</h1>
+  </header>
+  <div class="header-placeholder"></div>
+  <div class="content">
+    <div class="gallery" id="gallery"></div>
+  </div>
+  <footer>
+    <a href="https://example.com/buy">Buy</a>
+    <a href="https://example.com/contact">Contact</a>
+    <a href="https://example.com/michael">Michael</a>
+  </footer>
+
+  <div class="overlay" id="overlay">
+    <div class="overlay-content" id="overlayContent">
+      <img id="overlayImage" src="" alt="">
+      <div class="description" id="overlayDescription"></div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      let imagesData = [];
+      let galleryContainer = document.getElementById('gallery');
+      const overlay = document.getElementById('overlay');
+      const overlayImage = document.getElementById('overlayImage');
+      const overlayDescription = document.getElementById('overlayDescription');
+      let recentImages = [];
+      const maxRecent = 20; // Prevent images from repeating within the last 2 screen heights
+
+      function getUniqueImages() {
+        const availableImages = imagesData.filter(img => !recentImages.includes(img.src));
+        if (availableImages.length < 10) {
+          recentImages = [];
+        }
+        return availableImages.sort(() => Math.random() - 0.5).slice(0, 10);
+      }
+
+      function appendImages() {
+        const uniqueImages = getUniqueImages();
+        uniqueImages.forEach(image => {
+          const container = document.createElement('div');
+          container.className = 'image-container';
+
+          const imgElement = document.createElement('img');
+          imgElement.src = image.src;
+          imgElement.alt = image.alt;
+          imgElement.dataset.description = image.description;
+
+          imgElement.addEventListener('click', () => {
+            overlay.style.display = 'flex';
+            document.body.classList.add('no-scroll'); // Disable scrolling
+            overlayImage.src = image.src;
+            overlayImage.alt = image.alt;
+            overlayDescription.textContent = image.description;
+          });
+
+          recentImages.push(image.src);
+          if (recentImages.length > maxRecent) recentImages.shift();
+
+          container.appendChild(imgElement);
+          galleryContainer.appendChild(container);
+        });
+      }
+
+      overlay.addEventListener('click', (e) => {
+        if (!e.target.classList.contains('description')) {
+          overlay.style.display = 'none';
+          document.body.classList.remove('no-scroll'); // Enable scrolling
+        }
+      });
+
+      fetch('images.json')
+        .then(response => response.json())
+        .then(data => {
+          imagesData = data;
+          appendImages();
+        })
+        .catch(error => {
+          console.error('Error fetching the images data:', error);
+        });
+
+      window.addEventListener('scroll', function() {
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+          appendImages();
+        }
+      });
+
+      const header = document.getElementById('pageHeader');
+      const thresholdOpaque = window.innerHeight * 2;
+      const thresholdFade = window.innerHeight * 3;
+      const fadeDistance = window.innerHeight * 0.5;
+
+      window.addEventListener('scroll', function() {
+        if (window.scrollY < thresholdOpaque) {
+          header.style.opacity = 1;
+        } else if (window.scrollY >= thresholdOpaque && window.scrollY < thresholdFade) {
+          let extra = window.scrollY - thresholdOpaque;
+          let additionalFade = Math.min(1, extra / fadeDistance);
+          header.style.opacity = 1 - additionalFade;
+        } else {
+          header.style.opacity = 0;
+        }
+      });
+    });
+  </script>
+</body>
+</html>
