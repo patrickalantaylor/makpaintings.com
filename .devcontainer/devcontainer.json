@@ -1,0 +1,25 @@
+{
+  "name": "Vanilla JS Web Gallery",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:0-20-bullseye",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "20"
+    },
+    "ghcr.io/devcontainers/features/git:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "editor.formatOnSave": true,
+        "files.autoSave": "onWindowChange"
+      },
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "ritwickdey.LiveServer"
+      ]
+    }
+  },
+  "forwardPorts": [5500],
+  "postCreateCommand": "npm install -g live-server"
+}
