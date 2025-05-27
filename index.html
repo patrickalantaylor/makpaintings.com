@@ -8,20 +8,19 @@
     body {
       margin: 0;
       padding: 0;
-      font-family: sans-serif;
+      font-family: "Times New Roman", Times, serif;
       background: #2e2e2e;
       color: #fff;
-      padding-bottom: 60px; /* Space for fixed footer */
-      overflow-y: auto; /* Enable scrolling by default */
+      padding-bottom: 60px;
+      overflow-y: auto;
     }
     body.no-scroll {
-      overflow: hidden; /* Disable scrolling when overlay is shown */
+      overflow: hidden;
     }
     header {
       text-align: center;
       padding: 20px;
       background: #2e2e2e;
-      font-family: "Times New Roman", Times, serif;
       font-weight: bold;
       letter-spacing: 0.15em;
       position: fixed;
@@ -30,6 +29,12 @@
       width: 100%;
       z-index: 1001;
       transition: opacity 0.3s ease-out;
+      box-sizing: border-box;
+    }
+    header h1 {
+      margin: 0;
+      padding: 0;
+      text-align: center;
     }
     footer {
       text-align: center;
@@ -59,19 +64,34 @@
       padding-top: 30px;
     }
     .image-container {
-      padding: 5px;
+      padding: 10px;
       box-sizing: border-box;
       display: inline-block;
       width: 100%;
+      text-align: center;
+      color: #fff;
+      cursor: pointer;
     }
     .image-container img {
       width: 100%;
       display: block;
-      cursor: pointer;
       transition: transform 0.3s;
     }
-    .image-container img:hover {
+    .image-container img:hover, .image-container:hover {
       transform: scale(1.05);
+    }
+    .image-container .description-preview {
+      padding: 20px;
+      border: 1px solid #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 200px;
+      font-size: 16px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: normal;
+      word-wrap: break-word;
     }
     .overlay {
       display: none;
@@ -84,19 +104,29 @@
       z-index: 1002;
       justify-content: center;
       align-items: center;
+      text-align: center;
     }
     .overlay-content {
       position: relative;
       text-align: center;
+      padding: 20px;
+      border: 1px solid #fff;
+      max-width: 800px;
+      background: #2e2e2e;
+      display: inline-block;
     }
     .overlay-content img {
-      max-width: 90%;
+      max-width: 100%;
       max-height: 80vh;
+      display: block;
+      margin: 0 auto; /* Center the image horizontally */
     }
     .overlay-content .description {
       margin-top: 15px;
       font-size: 18px;
       color: #fff;
+      padding: 20px;
+      border: 1px solid #fff;
     }
     @media screen and (max-width: 600px) {
       .gallery {
@@ -104,6 +134,9 @@
       }
       .header-placeholder {
         height: 160px;
+      }
+      header {
+        padding: 15px 10px;
       }
     }
   </style>
@@ -117,9 +150,9 @@
     <div class="gallery" id="gallery"></div>
   </div>
   <footer>
-    <a href="https://example.com/buy">Buy</a>
-    <a href="https://example.com/contact">Contact</a>
-    <a href="https://example.com/michael">Michael</a>
+    <a href="https://example.com/buy">buy</a>
+    <a href="https://example.com/contact">contact</a>
+    <a href="https://example.com/michael">instagram</a>
   </footer>
 
   <div class="overlay" id="overlay">
@@ -136,40 +169,44 @@
       const overlay = document.getElementById('overlay');
       const overlayImage = document.getElementById('overlayImage');
       const overlayDescription = document.getElementById('overlayDescription');
-      let recentImages = [];
-      const maxRecent = 20; // Prevent images from repeating within the last 2 screen heights
-
-      function getUniqueImages() {
-        const availableImages = imagesData.filter(img => !recentImages.includes(img.src));
-        if (availableImages.length < 10) {
-          recentImages = [];
-        }
-        return availableImages.sort(() => Math.random() - 0.5).slice(0, 10);
-      }
 
       function appendImages() {
-        const uniqueImages = getUniqueImages();
-        uniqueImages.forEach(image => {
+        const shuffledImages = [...imagesData].sort(() => Math.random() - 0.5);
+        shuffledImages.forEach(image => {
           const container = document.createElement('div');
           container.className = 'image-container';
 
-          const imgElement = document.createElement('img');
-          imgElement.src = image.src;
-          imgElement.alt = image.alt;
-          imgElement.dataset.description = image.description;
+          if (image.src) {
+            const imgElement = document.createElement('img');
+            imgElement.src = image.src;
+            imgElement.alt = image.alt || '';
+            imgElement.dataset.description = image.description;
 
-          imgElement.addEventListener('click', () => {
-            overlay.style.display = 'flex';
-            document.body.classList.add('no-scroll'); // Disable scrolling
-            overlayImage.src = image.src;
-            overlayImage.alt = image.alt;
-            overlayDescription.textContent = image.description;
-          });
+            imgElement.addEventListener('click', () => {
+              overlay.style.display = 'flex';
+              document.body.classList.add('no-scroll');
+              overlayImage.style.display = 'block';
+              overlayImage.src = image.src;
+              overlayImage.alt = image.alt || '';
+              overlayDescription.textContent = image.description;
+            });
 
-          recentImages.push(image.src);
-          if (recentImages.length > maxRecent) recentImages.shift();
+            container.appendChild(imgElement);
+          } else if (image.description) {
+            const textElement = document.createElement('div');
+            textElement.className = 'description-preview';
+            textElement.textContent = image.description.length > 140 ? image.description.substring(0, 140) + '...' : image.description;
 
-          container.appendChild(imgElement);
+            textElement.addEventListener('click', () => {
+              overlay.style.display = 'flex';
+              document.body.classList.add('no-scroll');
+              overlayImage.style.display = 'none';
+              overlayDescription.textContent = image.description;
+            });
+
+            container.appendChild(textElement);
+          }
+
           galleryContainer.appendChild(container);
         });
       }
@@ -177,7 +214,7 @@
       overlay.addEventListener('click', (e) => {
         if (!e.target.classList.contains('description')) {
           overlay.style.display = 'none';
-          document.body.classList.remove('no-scroll'); // Enable scrolling
+          document.body.classList.remove('no-scroll');
         }
       });
 
@@ -190,29 +227,6 @@
         .catch(error => {
           console.error('Error fetching the images data:', error);
         });
-
-      window.addEventListener('scroll', function() {
-        if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
-          appendImages();
-        }
-      });
-
-      const header = document.getElementById('pageHeader');
-      const thresholdOpaque = window.innerHeight * 2;
-      const thresholdFade = window.innerHeight * 3;
-      const fadeDistance = window.innerHeight * 0.5;
-
-      window.addEventListener('scroll', function() {
-        if (window.scrollY < thresholdOpaque) {
-          header.style.opacity = 1;
-        } else if (window.scrollY >= thresholdOpaque && window.scrollY < thresholdFade) {
-          let extra = window.scrollY - thresholdOpaque;
-          let additionalFade = Math.min(1, extra / fadeDistance);
-          header.style.opacity = 1 - additionalFade;
-        } else {
-          header.style.opacity = 0;
-        }
-      });
     });
   </script>
 </body>
