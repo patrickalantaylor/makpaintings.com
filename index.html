@@ -110,8 +110,14 @@
       position: relative;
       text-align: center;
       padding: 20px;
-      border: 1px solid #fff;
-      max-width: 800px;
+      border: 4px double #fff;
+      box-shadow: 0 0 40px 10px rgba(255,255,255,0.15), 0 0 0 8px rgba(46,46,46,0.8) inset;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #2e2e2e 60%, #6a4e2a 100%);
+      /* Add a subtle gold highlight to the border */
+      box-shadow: 0 0 40px 10px rgba(255,255,255,0.15), 0 0 0 8px rgba(46,46,46,0.8) inset, 0 0 0 4px #c9a14a inset;
+      outline: none;
+      outline-offset: 0;
       background: #2e2e2e;
       display: inline-block;
     }
@@ -178,7 +184,7 @@
 
           if (image.src) {
             const imgElement = document.createElement('img');
-            imgElement.src = image.src;
+            imgElement.src = 'images/' + image.src;
             imgElement.alt = image.alt || '';
             imgElement.dataset.description = image.description;
 
@@ -186,7 +192,7 @@
               overlay.style.display = 'flex';
               document.body.classList.add('no-scroll');
               overlayImage.style.display = 'block';
-              overlayImage.src = image.src;
+              overlayImage.src = 'images/' + image.src;
               overlayImage.alt = image.alt || '';
               overlayDescription.textContent = image.description;
             });
@@ -218,7 +224,7 @@
         }
       });
 
-      fetch('images.json')
+      fetch('images/images.json')
         .then(response => response.json())
         .then(data => {
           imagesData = data;

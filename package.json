@@ -1,0 +1,11 @@
+{
+  "name": "makpaintings.com",
+  "version": "1.0.0",
+  "description": "Gallery site for Michael Knutson's paintings.",
+  "main": "index.html",
+  "scripts": {
+    "validate-images": "node validate-images.js"
+  },
+  "author": "Michael Knutson",
+  "license": "MIT"
+}
