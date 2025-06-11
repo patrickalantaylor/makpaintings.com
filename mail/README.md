@@ -73,3 +73,16 @@ This project includes a [dev container](.devcontainer/) for a fully configured d
 - **Run Lambda Locally**: Use the AWS Toolkit or `sam local invoke` in the terminal.
 - **Install Python Packages**: Use `pip install <package>` in the integrated terminal.
 - **AWS CLI**: Use `aws` commands directly in the terminal.
+
+### Using pyenv and pyenv-virtualenv
+If you are developing outside the devcontainer, you can use your local Python environment:
+
+1. Install [pyenv](https://github.com/pyenv/pyenv) and [pyenv-virtualenv](https://github.com/pyenv/pyenv-virtualenv).
+2. Create and activate the virtual environment:
+   ```sh
+   pyenv activate makpaintings_mail_312
+   ```
+3. Install dependencies:
+   ```sh
+   pip install boto3 aws-sam-cli
+   ```
