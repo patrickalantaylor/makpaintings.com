@@ -58,16 +58,6 @@ sequenceDiagram
 ### Additional Resources
 - [AWS Toolkit for VS Code Documentation](https://docs.aws.amazon.com/toolkit-for-vscode/latest/userguide/lambda.html)
 
-## Development in a Dev Container
-
-This project includes a [dev container](.devcontainer/) for a fully configured development environment.
-
-### Getting Started
-
-1. **Open in VS Code**: Open this folder in [Visual Studio Code](https://code.visualstudio.com/).
-2. **Reopen in Container**: When prompted, or via the Command Palette (`F1` > "Dev Containers: Reopen in Container"), open the workspace in the dev container.
-3. **Ready to Develop**: The container includes Python 3, AWS CLI, AWS SAM CLI, `boto3`, and the AWS Toolkit extension.
-
 ### Useful Commands
 
 - **Run Lambda Locally**: Use the AWS Toolkit or `sam local invoke` in the terminal.
